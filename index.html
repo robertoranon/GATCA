@@ -59,6 +59,9 @@
 
       let object;
 
+      const raycaster = new THREE.Raycaster();
+      const pointer = new THREE.Vector2();
+
       init();
       animate();
 
@@ -99,6 +102,26 @@
 
         // model
 
+        function onDocumentMouseMove(event) {
+          const rect = renderer.domElement.getBoundingClientRect();
+          pointer.x = ((event.clientX - rect.left) / (rect.right - rect.left)) * 2 - 1;
+          pointer.y = -((event.clientY - rect.top) / (rect.bottom - rect.top)) * 2 + 1;
+        }
+
+        function onClick(event) {
+          raycaster.setFromCamera(pointer, camera);
+
+          const intersects = raycaster.intersectObjects(scene.children);
+
+          if (intersects.length > 0) {
+            const link = 'https://hex6c.medium.com/eva-a-mitochondrial-story-eec51f8c803a';
+            window.open(link);
+          }
+        }
+
+        document.addEventListener('mousemove', onDocumentMouseMove);
+        document.addEventListener('click', onClick);
+
         function onProgress(xhr) {
           if (xhr.lengthComputable) {
             const percentComplete = (xhr.loaded / xhr.total) * 100;
@@ -125,7 +148,7 @@
         renderer.setSize(window.innerWidth, window.innerHeight);
         container.appendChild(renderer.domElement);
 
-        document.addEventListener('mousemove', onDocumentMouseMove);
+        //document.addEventListener('mousemove', onDocumentMouseMove);
 
         //
 
@@ -142,22 +165,12 @@
         renderer.setSize(window.innerWidth, window.innerHeight);
       }
 
-      function onDocumentMouseMove(event) {
-        mouseX = (event.clientX - windowHalfX) / 2;
-        mouseY = (event.clientY - windowHalfY) / 2;
-      }
-
-      //
-
       function animate() {
         requestAnimationFrame(animate);
         render();
       }
 
       function render() {
-        //camera.position.x += ( mouseX - camera.position.x ) * .01;
-        //camera.position.y += ( - mouseY - camera.position.y ) * .05;
-
         if (object) {
           object.rotation.y += 0.005;
         }
